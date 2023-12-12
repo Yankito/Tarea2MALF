@@ -1,5 +1,6 @@
 import java.util.HashMap;
 
+
 public class Main {
     static HashMap<String, Integer> tablaVariables = new HashMap<>();
 
@@ -13,25 +14,38 @@ public class Main {
         if(linea.charAt(0) == '$') {
             String[] partes = linea.split("=", 2);
             partes[0] = partes[0].replace("$", "");
-            agregarVariable(partes[0], calcularAsignacion(partes[1]));
+            
+            Integer valorAsignado = calcularAsignacion(partes[1]);
+            if(valorAsignado != null)
+                agregarVariable(partes[0], valorAsignado);
+            else
+                System.out.println("Error: variable no declarada");
+        
         }
     }
 
-    public static int calcularAsignacion(String linea){
+    public static Integer calcularAsignacion(String linea) {
         if(linea.charAt(0) == '$'){
-            return tablaVariables.get(linea.replace("$", ""));
+            if(tablaVariables.containsKey(linea.replace("$", "")))
+                return tablaVariables.get(linea.replace("$", ""));
+            else
+                return null;
         }
         else if(linea.matches("-?\\d+"))
             return Integer.parseInt(linea);
-
-        return 0;
+        else
+            return Operaciones.resultadoExpresion(linea);
+        
     }
 
+    
 
     public static void main(String[] args) {
+        
+
         leerLinea(" $hola=5");
         leerLinea(" $hola2=7");
-        leerLinea(" $hola3=$hola");
+        leerLinea(" $hola3=22+5* 8/2");
         System.out.println(tablaVariables);
     }
 }
