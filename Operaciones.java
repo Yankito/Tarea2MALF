@@ -2,9 +2,9 @@ import java.util.Stack;
 
 public class Operaciones {
 
-    public static int resultadoExpresion(String expresion){
+    public static Integer resultadoExpresion(String expresion){
         expresion = transformaAPostijo(expresion);
-        return (int)evaluarExpresionPostfija(expresion);
+        return evaluarExpresionPostfija(expresion);
     }
 
     public static String transformaAPostijo(String expresion) {
@@ -43,7 +43,7 @@ public class Operaciones {
         return postFijo.toString();
     }
 
-    public static double evaluarExpresionPostfija(String expresionPostfija) {
+    public static Double evaluarExpresionPostfija(String expresionPostfija) {
         System.out.println(expresionPostfija);
         String[] tokens = expresionPostfija.split("\\s+");
         Stack<Double> numeros = new Stack<>();
@@ -53,7 +53,11 @@ public class Operaciones {
                 numeros.push(Double.parseDouble(token));
             } else if (esOperador(token)) {
                 double segundoNumero = numeros.pop();
-                double primerNumero = numeros.pop();
+                double primerNumero;
+                if(!numeros.isEmpty())
+                    primerNumero = numeros.pop();
+                else    
+                    return null;
                 double resultado = aplicarOperacion(primerNumero, segundoNumero, token.charAt(0));
                 numeros.push(resultado);
             }

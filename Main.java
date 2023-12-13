@@ -45,7 +45,7 @@ public class Main {
 
         leerLinea(" $hola=5");
         leerLinea(" $hola2=7");
-        leerLinea(" $hola3=22+5* 8/2");
+        leerLinea(" $hola3=22+");
         System.out.println(tablaVariables);
     }
 }
