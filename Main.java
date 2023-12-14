@@ -9,10 +9,13 @@ public class Main {
     }
 
     public static void leerLinea(String linea){
-        linea= linea.replaceAll("\\s", "");
+        //linea= linea.replaceAll("\\s", "");
+        linea = linea.replaceFirst("^[\\s]+", "");
+        linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
         System.out.println(linea);
         if(linea.charAt(0) == '$') {
             String[] partes = linea.split("=", 2);
+            partes[0]= partes[0].replaceAll("\\s", "");
             partes[0] = partes[0].replace("$", "");
             
             Integer valorAsignado = calcularAsignacion(partes[1]);
@@ -43,9 +46,9 @@ public class Main {
     public static void main(String[] args) {
         
 
-        leerLinea(" $hola=5");
+        leerLinea("     $hola=5");
         leerLinea(" $hola2=7");
-        leerLinea(" $hola3=22+");
+        leerLinea(" $hola3=6 + $hola2*$hola");
         System.out.println(tablaVariables);
     }
 }
