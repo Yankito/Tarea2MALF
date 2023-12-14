@@ -4,9 +4,8 @@ import java.util.regex.Pattern;
 
 public class Operaciones {
 
-    public static boolean compruebaExpresion(String linea){
-        reemplazarVariables(linea);
-        if(!linea.matches("^\\s*-?\\d+(\\s*[+\\-*/%]\\s*-?\\d+)*\\s*$")){
+    public static boolean compruebaExpresion(String linea) {
+        if (linea == null || !linea.matches("^\\s*-?\\d+(\\s*[+\\-*/%]\\s*-?\\d+)*\\s*$")) {
             System.out.println("Error: expresión no válida");
             return false;
         }
@@ -14,25 +13,28 @@ public class Operaciones {
         return true;
     }
 
-    public static String reemplazarVariables(String linea){
+    public static String reemplazarVariables(String linea) {
         Pattern pattern = Pattern.compile("\\$[a-zA-Z][a-zA-Z0-9_]*");
         Matcher matcher = pattern.matcher(linea);
 
         while (matcher.find()) {
-            System.out.println("Variable encontrada: " + matcher.group());
-            if(!Main.tablaVariables.containsKey(matcher.group().replace("$", ""))){
+            // System.out.println("Variable encontrada: " + matcher.group());
+            if (!Main.tablaVariables.containsKey(matcher.group().replace("$", ""))) {
+                // System.out.println(matcher.group());
                 System.out.println("Error: variable no declarada");
                 return null;
-            }
-            else{
-                linea = linea.replace(matcher.group(), Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
+            } else {
+                linea = linea.replace(matcher.group(),
+                        Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
             }
         }
+        // System.out.println(linea);
         return linea;
     }
 
-    public static Integer resultadoExpresion(String expresion){
-        if(compruebaExpresion(expresion)){
+    public static Integer resultadoExpresion(String expresion) {
+        expresion = reemplazarVariables(expresion);
+        if (compruebaExpresion(expresion)) {
             expresion = transformaAPostijo(expresion);
             return evaluarExpresionPostfija(expresion).intValue();
         }
@@ -46,39 +48,41 @@ public class Operaciones {
         Stack<String> pila = new Stack<>();
         System.out.println(expresion);
         String[] tokens = expresion.split("(?<=[+*/%\\-])|(?=[+*/%\\-])");
-        for (int i = 0; i < tokens.length; i++) {
-            System.out.println(tokens[i]);
-        }
+        /*
+         * for (int i = 0; i < tokens.length; i++) {
+         * System.out.println(tokens[i]);
+         * }
+         */
 
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
 
             if (token.matches("-?\\d+")) {
-                postFijo.append(token+" ");
+                postFijo.append(token + " ");
             } else if (token.equals(("("))) {
                 pila.push(token);
-            } else if (token.equals( ")")) {
-                while (!pila.isEmpty() && !pila.peek().equals("(") ) {
-                    postFijo.append(pila.pop()+" ");
+            } else if (token.equals(")")) {
+                while (!pila.isEmpty() && !pila.peek().equals("(")) {
+                    postFijo.append(pila.pop() + " ");
                 }
                 pila.pop();
             } else if (esOperador(token)) {
                 while (!pila.isEmpty() && precedencia(pila.peek()) >= precedencia(token)) {
-                    postFijo.append(pila.pop()+" ");
+                    postFijo.append(pila.pop() + " ");
                 }
                 pila.push(token);
             }
         }
 
         while (!pila.isEmpty()) {
-            postFijo.append(pila.pop()+" ");
+            postFijo.append(pila.pop() + " ");
         }
 
         return postFijo.toString();
     }
 
     public static Double evaluarExpresionPostfija(String expresionPostfija) {
-        System.out.println("a: "+expresionPostfija);
+        // System.out.println("a: " + expresionPostfija);
         String[] tokens = expresionPostfija.split("\\s+");
         Stack<Double> numeros = new Stack<>();
         for (String token : tokens) {
@@ -87,9 +91,9 @@ public class Operaciones {
             } else if (esOperador(token)) {
                 double segundoNumero = numeros.pop();
                 double primerNumero;
-                if(!numeros.isEmpty())
+                if (!numeros.isEmpty())
                     primerNumero = numeros.pop();
-                else    
+                else
                     return null;
                 double resultado = aplicarOperacion(primerNumero, segundoNumero, token);
                 numeros.push(resultado);
