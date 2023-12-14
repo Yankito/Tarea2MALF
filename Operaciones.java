@@ -13,27 +13,8 @@ public class Operaciones {
         return true;
     }
 
-    public static String reemplazarVariables(String linea) {
-        Pattern pattern = Pattern.compile("\\$[a-zA-Z][a-zA-Z0-9_]*");
-        Matcher matcher = pattern.matcher(linea);
-
-        while (matcher.find()) {
-            // System.out.println("Variable encontrada: " + matcher.group());
-            if (!Main.tablaVariables.containsKey(matcher.group().replace("$", ""))) {
-                // System.out.println(matcher.group());
-                System.out.println("Error: variable no declarada");
-                return null;
-            } else {
-                linea = linea.replace(matcher.group(),
-                Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
-            }
-        }
-        // System.out.println(linea);
-        return linea;
-    }
-
     public static Integer resultadoExpresion(String expresion) {
-        expresion = reemplazarVariables(expresion);
+        expresion = Main.reemplazarVariables(expresion);
         if (compruebaExpresion(expresion)) {
             expresion = transformaAPostijo(expresion);
             return evaluarExpresionPostfija(expresion).intValue();

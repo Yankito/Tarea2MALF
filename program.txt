@@ -1,0 +1,31 @@
+        $hola =2;
+        
+       $hola2=7;
+        $hola3=$hola2*$hola;
+
+       $hola5=$hola3+$hola;
+        write $hola5;
+        if( $hola <$hola5)then
+        write 1;
+        write 2;
+
+            if( 4 <4)then
+            write 3;
+            else
+            write 8;
+            endif;
+
+        write 4;
+        else
+        write 5;
+        write 6;
+        endif;
+        write 10;
+
+        $i = 0;
+        while ($i<5) do
+            if($i==2) then
+                write $i;      
+            endif;
+            $i = $i+1;
+        wend;
