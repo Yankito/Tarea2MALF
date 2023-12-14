@@ -54,9 +54,35 @@ public class Main {
             linea = linea.replace("write", "");
             linea = linea.replaceFirst("^[\\s]+", "");
             System.out.println("linea: " + linea);
-            System.out.println(calcularAsignacion(linea));
+            Integer resultado = calcularAsignacion(linea);
+            if(resultado!=null)
+                System.out.println(resultado);
+        }
+        else if(linea.contains("if ") && linea.contains("then")){
+            linea = linea.replace("if", "");
+            linea = linea.replace("then", "");
+            linea = linea.replaceFirst("^[\\s]+", "");
+            if(linea.contains("(") && linea.contains(")")){
+                linea = linea.replace("(", "");
+                linea = linea.replace(")", "");
+                if(evaluarCondicion(linea)){
+                    System.out.println("verdaero");
+                }
+                else{
+                    System.out.println("falso");
+                }
+            }
         }
 
+
+
+    }
+
+    public static boolean evaluarCondicion(String linea){
+        System.out.println("Linea en cond:"+linea);
+        if(linea.matches("\\s*-?\\d+\\s*(<|>|<=|>=|==|!=)\\s*-?\\d+\\s*"))
+            return Condicionales.evaluarExpresion(linea);
+        return false;
     }
 
     public static Integer calcularAsignacion(String linea) {
@@ -75,11 +101,14 @@ public class Main {
     public static void main(String[] args) {
 
         leerLinea("     $hola =2;");
-        leerLinea("write $hola*5;");
+        
         leerLinea(" $hola2=7;");
         leerLinea(" $hola3=$hola2*$hola;");
-        leerLinea("read $hola4;");
+        //leerLinea("read $hola4;");
         leerLinea("$hola5=$hola4+$hola;");
-        // System.out.println(tablaVariables);
+        leerLinea("write $hola5;");
+        leerLinea("if ( 2 < 4 ) then;");
+        System.out.println(tablaVariables);
+
     }
 }
