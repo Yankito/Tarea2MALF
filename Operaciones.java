@@ -25,7 +25,7 @@ public class Operaciones {
                 return null;
             } else {
                 linea = linea.replace(matcher.group(),
-                        Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
+                Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
             }
         }
         // System.out.println(linea);
@@ -46,7 +46,7 @@ public class Operaciones {
 
         StringBuilder postFijo = new StringBuilder();
         Stack<String> pila = new Stack<>();
-        System.out.println(expresion);
+        //System.out.println(expresion);
         String[] tokens = expresion.split("(?<=[+*/%\\-])|(?=[+*/%\\-])");
         /*
          * for (int i = 0; i < tokens.length; i++) {
