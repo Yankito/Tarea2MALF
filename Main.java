@@ -28,8 +28,29 @@ public class Main {
         return false;
     }
 
+    public static boolean buscarElse(int indice){
+        for(int i = indice; i<codigo.size(); i++){
+            if(codigo.get(i).contains("else")){
+                pc = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean buscarFinIf(int indice){
+        for(int i = indice; i<codigo.size(); i++){
+            if(codigo.get(i).contains("endif")){
+                pc = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean leerLinea(String linea) {
-        
+        //System.out.println("pc: "+pc);
+        //System.out.println("--"+linea+"--");
         // linea= linea.replaceAll("\\s", "");
         linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
         //System.out.println(linea);
@@ -48,7 +69,6 @@ public class Main {
                 if(linea.matches("\\s*-?\\d+\\s*(<|>|<=|>=|==|!=)\\s*-?\\d+\\s*")){
                     //System.out.println(Condicionales.evaluarExpresion(linea));
                     if (!Condicionales.evaluarExpresion(linea)) {
-                        ejecucion = false;
                         if(!buscarFinWhile(pc)){
                             System.out.println("No cierra while");
                             return false;
@@ -63,7 +83,6 @@ public class Main {
 
             }
         }
-        pc++;
 
         if(linea.contains("if") && linea.contains("then")){
             linea = linea.replace("if", "");
@@ -79,8 +98,15 @@ public class Main {
                 if(linea.matches("\\s*-?\\d+\\s*(<|>|<=|>=|==|!=)\\s*-?\\d+\\s*")){
                     //System.out.println(Condicionales.evaluarExpresion(linea));
                     if (!Condicionales.evaluarExpresion(linea)) {
-                        ejecucion = false;
+                        if(!buscarElse(pc)){
+                            if(!buscarFinIf(pc)){
+                                System.out.println("No cierra if");
+                                return false;
+                            }
+                        }
                     }
+                    
+                    pc++;
                     return true;
                 }
             }
@@ -89,7 +115,11 @@ public class Main {
             return false;
         }
         else if(linea.equals("else")){
-            ejecucion = !ejecucion;
+            if(!buscarFinIf(pc)){
+                System.out.println("No cierra if");
+                return false;
+            }
+            pc++;
             return true;
         }
 
@@ -102,21 +132,15 @@ public class Main {
         //System.out.println(linea);
 
         if(linea.equals("endif")){  
-            ejecucion = true;
-            return true;
+           
         }
 
         if(linea.equals("wend")){
-            if(ejecucion){
-                pc = Ciclos.inicio;
-            }
-            else{
-                ejecucion = !ejecucion;
-            }
+            pc = Ciclos.inicio;
             return true;
         }
 
-        if(!ejecucion) return true;
+        
 
         
         /*
@@ -126,7 +150,7 @@ public class Main {
          */
         
 
-
+        
         if (linea.charAt(0) == '$') {
 
             String[] partes = linea.split("=", 2);
@@ -135,6 +159,7 @@ public class Main {
                 partes[0] = partes[0].replaceAll("\\s", "");
                 partes[0] = partes[0].replace("$", "");
 
+                partes[1] = partes[1].replaceAll("^[\\s]+|[\\s]+$", "");
                 Integer valorAsignado = calcularAsignacion(partes[1]);
                 if (valorAsignado != null)
                     agregarVariable(partes[0], valorAsignado);
@@ -158,15 +183,17 @@ public class Main {
                 return false;
             }
         } else if (linea.contains("write ")) {
+            
             linea = linea.replace("write", "");
-            linea = linea.replaceFirst("^[\\s]+", "");
-            //System.out.println("linea: " + linea);
+            linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
+            //System.out.println("linea:" + linea+"--");
             Integer resultado = calcularAsignacion(linea);
             if(resultado!=null)
                 System.out.println(resultado);
             else
                 return false;
         }
+        pc++;
         return true;
 
     }
@@ -224,7 +251,8 @@ public class Main {
             }
                     
             if(!leerLinea(codigo.get(pc))){
-                System.out.println("Error linea "+pc);
+                System.out.println("Error linea "+(pc+1));
+                System.out.println(codigo.get(pc));
                 return;
             }
         }
@@ -266,7 +294,7 @@ public class Main {
         }
         ejecutaCodigo();  
 
-        System.out.println(tablaVariables);
+        //System.out.println(tablaVariables);
 
     }
 }
