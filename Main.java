@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
+    static int inicioCiclo = 0;
     static int pc=0;
     static boolean ejecucion = true;
     static Scanner sc = new Scanner(System.in);
@@ -59,7 +60,7 @@ public class Main {
             
             linea = linea.replace("while", "");
             linea = linea.replace("do", "");
-            linea = linea.replaceFirst("^[\\s]+", "");
+            linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
             if(linea.contains("(") && linea.contains(")")){
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
@@ -75,7 +76,7 @@ public class Main {
                         }
                     }
                     else{
-                       Ciclos.cicloWhile();   
+                        inicioCiclo = pc; 
                     }
                     pc++;
                     return true;
@@ -83,11 +84,10 @@ public class Main {
 
             }
         }
-
-        if(linea.contains("if") && linea.contains("then")){
+        else if(linea.contains("if") && linea.contains("then")){
             linea = linea.replace("if", "");
             linea = linea.replace("then", "");
-            linea = linea.replaceFirst("^[\\s]+", "");
+            linea.replaceAll("^[\\s]+|[\\s]+$", "");
             if(linea.contains("(") && linea.contains(")")){
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
@@ -135,28 +135,17 @@ public class Main {
            
         }
 
-        if(linea.equals("wend")){
-            pc = Ciclos.inicio;
+        else if(linea.equals("wend")){
+            pc = inicioCiclo;
             return true;
         }
 
         
-
-        
-        /*
-         * if (linea.charAt(linea.length() - 1) != ';') {
-         * return;
-         * }
-         */
-        
-
-        
-        if (linea.charAt(0) == '$') {
+        else if (linea.charAt(0) == '$') {
 
             String[] partes = linea.split("=", 2);
-            partes[0] = partes[0].trim();
+            partes[0] = partes[0].replaceAll("^[\\s]+|[\\s]+$", "");
             if (partes[0].matches("\\$[a-zA-Z][a-zA-Z0-9_]*")) {
-                partes[0] = partes[0].replaceAll("\\s", "");
                 partes[0] = partes[0].replace("$", "");
 
                 partes[1] = partes[1].replaceAll("^[\\s]+|[\\s]+$", "");
@@ -173,10 +162,9 @@ public class Main {
             }
         } else if (linea.contains("read ")) {
             linea = linea.replace("read", "");
-            linea = linea.replaceAll("\\s", "");
+            linea.replaceAll("^[\\s]+|[\\s]+$", "");
             if (linea.matches("\\$[a-zA-Z][a-zA-Z0-9_]*")) {
                 linea = linea.replace("$", "");
-                System.out.println("Ingrese un valor para " + linea);
                 tablaVariables.put(linea, sc.nextInt());
             } else {
                 System.out.println("Error: variable no valida");
