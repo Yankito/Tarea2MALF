@@ -9,7 +9,6 @@ public class Operaciones {
             System.out.println("Error: expresión no válida");
             return false;
         }
-        System.out.println("Expresión válida");
         return true;
     }
 

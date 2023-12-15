@@ -18,7 +18,17 @@ public class Main {
         tablaVariables.put(nombre, valor);
     }
 
-    public static void leerLinea(String linea) {
+    public static boolean buscarFinWhile(int indice){
+        for(int i = indice; i<codigo.size(); i++){
+            if(codigo.get(i).contains("wend")){
+                pc = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean leerLinea(String linea) {
         
         // linea= linea.replaceAll("\\s", "");
         linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
@@ -33,17 +43,22 @@ public class Main {
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
                 linea = reemplazarVariables(linea);
+                if(linea == null) return false;
+
                 if(linea.matches("\\s*-?\\d+\\s*(<|>|<=|>=|==|!=)\\s*-?\\d+\\s*")){
                     //System.out.println(Condicionales.evaluarExpresion(linea));
                     if (!Condicionales.evaluarExpresion(linea)) {
                         ejecucion = false;
+                        if(!buscarFinWhile(pc)){
+                            System.out.println("No cierra while");
+                            return false;
+                        }
                     }
                     else{
-                       Ciclos.cicloWhile(); 
-                       
+                       Ciclos.cicloWhile();   
                     }
                     pc++;
-                    return;
+                    return true;
                 }
 
             }
@@ -58,31 +73,37 @@ public class Main {
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
                 linea = reemplazarVariables(linea);
+
+                if(linea==null) return false;
+
                 if(linea.matches("\\s*-?\\d+\\s*(<|>|<=|>=|==|!=)\\s*-?\\d+\\s*")){
                     //System.out.println(Condicionales.evaluarExpresion(linea));
                     if (!Condicionales.evaluarExpresion(linea)) {
                         ejecucion = false;
                     }
-                    return;
+                    return true;
                 }
             }
             
             System.out.println("Error en expresion");
+            return false;
         }
         else if(linea.equals("else")){
             ejecucion = !ejecucion;
+            return true;
         }
 
 
         if (!linea.endsWith(";")) {
-            return;
+            System.out.println("falta ;");
+            return false;
         }
         linea = linea.substring(0, linea.length() - 1);
         //System.out.println(linea);
 
-        if(linea.equals("endif")){
-            
+        if(linea.equals("endif")){  
             ejecucion = true;
+            return true;
         }
 
         if(linea.equals("wend")){
@@ -92,10 +113,10 @@ public class Main {
             else{
                 ejecucion = !ejecucion;
             }
-
+            return true;
         }
 
-        if(!ejecucion) return;
+        if(!ejecucion) return true;
 
         
         /*
@@ -117,10 +138,13 @@ public class Main {
                 Integer valorAsignado = calcularAsignacion(partes[1]);
                 if (valorAsignado != null)
                     agregarVariable(partes[0], valorAsignado);
-                else
+                else{
                     System.out.println("Error: variable no declarada");
+                    return false;
+                }
             } else {
                 System.out.println("Error: variable no válida");
+                return false;
             }
         } else if (linea.contains("read ")) {
             linea = linea.replace("read", "");
@@ -131,6 +155,7 @@ public class Main {
                 tablaVariables.put(linea, sc.nextInt());
             } else {
                 System.out.println("Error: variable no valida");
+                return false;
             }
         } else if (linea.contains("write ")) {
             linea = linea.replace("write", "");
@@ -139,12 +164,10 @@ public class Main {
             Integer resultado = calcularAsignacion(linea);
             if(resultado!=null)
                 System.out.println(resultado);
+            else
+                return false;
         }
-
-
-
-
-
+        return true;
 
     }
 
@@ -185,8 +208,8 @@ public class Main {
     public static void leerArchivoLineaPorLinea(String rutaArchivo) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
             String linea;
-
-            while ((linea = br.readLine()) != null) {
+            while ((linea = br.readLine()) != null) {      
+                linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
                 codigo.add(linea);
             }
         }
@@ -194,7 +217,16 @@ public class Main {
 
     public static void ejecutaCodigo(){
         while(pc<codigo.size()){
-            leerLinea(codigo.get(pc));
+ 
+            if(codigo.get(pc).isEmpty()){
+                pc++;
+                continue;
+            }
+                    
+            if(!leerLinea(codigo.get(pc))){
+                System.out.println("Error linea "+pc);
+                return;
+            }
         }
     }
 
