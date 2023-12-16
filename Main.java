@@ -1,21 +1,20 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main {
     static int inicioCiclo = 0;
     static int pc=0;
     static boolean ejecucion = true;
     static Scanner sc = new Scanner(System.in);
-    static HashMap<String, Integer> tablaVariables = new HashMap<>();
+    static HashMap<String, BigInteger> tablaVariables = new HashMap<>();
     static ArrayList<String> codigo = new ArrayList<>();
 
-    public static void agregarVariable(String nombre, int valor) {
+    public static void agregarVariable(String nombre, BigInteger valor) {
         tablaVariables.put(nombre, valor);
     }
 
@@ -64,7 +63,7 @@ public class Main {
             if(linea.contains("(") && linea.contains(")")){
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
-                linea = reemplazarVariables(linea);
+                linea = Operaciones.reemplazarVariables(linea, tablaVariables);
                 if(linea == null) return false;
 
                 if(linea.matches("\\s*-?\\d+\\s*(<|>|<=|>=|==|!=)\\s*-?\\d+\\s*")){
@@ -91,7 +90,7 @@ public class Main {
             if(linea.contains("(") && linea.contains(")")){
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
-                linea = reemplazarVariables(linea);
+                linea = Operaciones.reemplazarVariables(linea, tablaVariables);
 
                 if(linea==null) return false;
 
@@ -149,7 +148,7 @@ public class Main {
                 partes[0] = partes[0].replace("$", "");
 
                 partes[1] = partes[1].replaceAll("^[\\s]+|[\\s]+$", "");
-                Integer valorAsignado = calcularAsignacion(partes[1]);
+                BigInteger valorAsignado = calcularAsignacion(partes[1]);
                 if (valorAsignado != null)
                     agregarVariable(partes[0], valorAsignado);
                 else{
@@ -165,7 +164,8 @@ public class Main {
             linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
             if (linea.matches("\\$[a-zA-Z][a-zA-Z0-9_]*")) {
                 linea = linea.replace("$", "");
-                tablaVariables.put(linea, sc.nextInt());
+                BigInteger valor = BigInteger.valueOf(Integer.parseInt(sc.nextLine()));
+                tablaVariables.put(linea, valor);
             } else {
                 System.out.println("Error: variable no valida");
                 return false;
@@ -175,7 +175,7 @@ public class Main {
             linea = linea.replace("write", "");
             linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
             //System.out.println("linea:" + linea+"--");
-            Integer resultado = calcularAsignacion(linea);
+            BigInteger resultado = calcularAsignacion(linea);
             if(resultado!=null)
                 System.out.println(resultado);
             else
@@ -187,35 +187,18 @@ public class Main {
     }
 
 
-    public static String reemplazarVariables(String linea) {
-        Pattern pattern = Pattern.compile("\\$[a-zA-Z][a-zA-Z0-9_]*");
-        Matcher matcher = pattern.matcher(linea);
 
-        while (matcher.find()) {
-            // System.out.println("Variable encontrada: " + matcher.group());
-            if (!Main.tablaVariables.containsKey(matcher.group().replace("$", ""))) {
-                // System.out.println(matcher.group());
-                System.out.println("Error: variable no declarada");
-                return null;
-            } else {
-                linea = linea.replace(matcher.group(),
-                Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
-            }
-        }
-        // System.out.println(linea);
-        return linea;
-    }
 
-    public static Integer calcularAsignacion(String linea) {
+    public static BigInteger calcularAsignacion(String linea) {
         if (linea.matches("\\s*\\$[a-zA-Z][a-zA-Z0-9_]*\\s*")) {
             if (tablaVariables.containsKey(linea.replace("$", "")))
                 return tablaVariables.get(linea.replace("$", ""));
             else
                 return null;
         } else if (linea.matches("-?\\d+"))
-            return Integer.parseInt(linea);
+            return BigInteger.valueOf(Integer.parseInt(linea));
         else
-            return Operaciones.resultadoExpresion(linea);
+            return Operaciones.resultadoExpresion(linea, tablaVariables);
 
     }
 

@@ -1,3 +1,5 @@
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,11 +14,30 @@ public class Operaciones {
         return true;
     }
 
-    public static Integer resultadoExpresion(String expresion) {
-        expresion = Main.reemplazarVariables(expresion);
+    public static String reemplazarVariables(String linea, HashMap<String, BigInteger> tablaVariables) {
+        Pattern pattern = Pattern.compile("\\$[a-zA-Z][a-zA-Z0-9_]*");
+        Matcher matcher = pattern.matcher(linea);
+
+        while (matcher.find()) {
+            // System.out.println("Variable encontrada: " + matcher.group());
+            if (!tablaVariables.containsKey(matcher.group().replace("$", ""))) {
+                // System.out.println(matcher.group());
+                System.out.println("Error: variable no declarada");
+                return null;
+            } else {
+                linea = linea.replace(matcher.group(),
+                tablaVariables.get(matcher.group().replace("$", "")).toString());
+            }
+        }
+        // System.out.println(linea);
+        return linea;
+    }
+
+    public static BigInteger resultadoExpresion(String expresion, HashMap<String, BigInteger> tablaVariables) {
+        expresion = reemplazarVariables(expresion, tablaVariables);
         if (compruebaExpresion(expresion)) {
             expresion = transformaAPostijo(expresion);
-            return evaluarExpresionPostfija(expresion).intValue();
+            return BigInteger.valueOf(evaluarExpresionPostfija(expresion).intValue());
         }
         return null;
     }
