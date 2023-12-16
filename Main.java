@@ -146,9 +146,11 @@ public class Main {
             String[] partes = linea.split("=", 2);
             partes[0] = partes[0].replaceAll("^[\\s]+|[\\s]+$", "");
             if (partes[0].matches("\\$[a-zA-Z][a-zA-Z0-9_]*")) {
+                
                 partes[0] = partes[0].replace("$", "");
-
+                System.out.println("--"+partes[0]+"--");
                 partes[1] = partes[1].replaceAll("^[\\s]+|[\\s]+$", "");
+                System.out.println("--"+partes[1]+"--");
                 Integer valorAsignado = calcularAsignacion(partes[1]);
                 if (valorAsignado != null)
                     agregarVariable(partes[0], valorAsignado);
@@ -188,21 +190,22 @@ public class Main {
 
 
     public static String reemplazarVariables(String linea) {
+        System.out.println(linea);
         Pattern pattern = Pattern.compile("\\$[a-zA-Z][a-zA-Z0-9_]*");
         Matcher matcher = pattern.matcher(linea);
 
         while (matcher.find()) {
             // System.out.println("Variable encontrada: " + matcher.group());
-            if (!Main.tablaVariables.containsKey(matcher.group().replace("$", ""))) {
+            if (!tablaVariables.containsKey(matcher.group().replace("$", ""))) {
                 // System.out.println(matcher.group());
                 System.out.println("Error: variable no declarada");
                 return null;
             } else {
                 linea = linea.replace(matcher.group(),
-                Main.tablaVariables.get(matcher.group().replace("$", "")).toString());
+                tablaVariables.get(matcher.group().replace("$", "")).toString());
             }
         }
-        // System.out.println(linea);
+        System.out.println(linea);
         return linea;
     }
 
@@ -282,7 +285,7 @@ public class Main {
         }
         ejecutaCodigo();  
 
-        //System.out.println(tablaVariables);
+        System.out.println(tablaVariables);
 
     }
 }

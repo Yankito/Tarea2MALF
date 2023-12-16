@@ -14,6 +14,7 @@ public class Operaciones {
 
     public static Integer resultadoExpresion(String expresion) {
         expresion = Main.reemplazarVariables(expresion);
+        System.out.println("--"+expresion+"--");
         if (compruebaExpresion(expresion)) {
             expresion = transformaAPostijo(expresion);
             return evaluarExpresionPostfija(expresion).intValue();
