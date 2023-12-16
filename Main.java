@@ -87,7 +87,7 @@ public class Main {
         else if(linea.contains("if") && linea.contains("then")){
             linea = linea.replace("if", "");
             linea = linea.replace("then", "");
-            linea.replaceAll("^[\\s]+|[\\s]+$", "");
+            linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
             if(linea.contains("(") && linea.contains(")")){
                 linea = linea.replace("(", "");
                 linea = linea.replace(")", "");
@@ -162,7 +162,7 @@ public class Main {
             }
         } else if (linea.contains("read ")) {
             linea = linea.replace("read", "");
-            linea.replaceAll("^[\\s]+|[\\s]+$", "");
+            linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
             if (linea.matches("\\$[a-zA-Z][a-zA-Z0-9_]*")) {
                 linea = linea.replace("$", "");
                 tablaVariables.put(linea, sc.nextInt());
