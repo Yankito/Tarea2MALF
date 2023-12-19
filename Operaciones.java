@@ -14,14 +14,12 @@ public class Operaciones {
         return true;
     }
 
-    public static String reemplazarVariables(String linea, HashMap<String, BigInteger> tablaVariables) {
+    public static String reemplazarVariables(String linea, HashMap<String, BigInteger> tablaVariables) { //Remplaza valores de variables por valor en la tabla
         Pattern pattern = Pattern.compile("\\$[a-zA-Z][a-zA-Z0-9_]*");
         Matcher matcher = pattern.matcher(linea);
 
         while (matcher.find()) {
-            // System.out.println("Variable encontrada: " + matcher.group());
             if (!tablaVariables.containsKey(matcher.group().replace("$", ""))) {
-                // System.out.println(matcher.group());
                 System.out.println("Error: variable no declarada");
                 return null;
             } else {
@@ -29,7 +27,6 @@ public class Operaciones {
                 tablaVariables.get(matcher.group().replace("$", "")).toString());
             }
         }
-        // System.out.println(linea);
         return linea;
     }
 
@@ -42,18 +39,12 @@ public class Operaciones {
         return null;
     }
 
-    public static String transformaAPostijo(String expresion) {
+    public static String transformaAPostijo(String expresion) { //Transforma a postfijo para evaluar expresion con pila
         expresion = expresion.replaceAll("\\s", "");
 
         StringBuilder postFijo = new StringBuilder();
         Stack<String> pila = new Stack<>();
-        //System.out.println(expresion);
         String[] tokens = expresion.split("(?<=[+*/%\\-])|(?=[+*/%\\-])");
-        /*
-         * for (int i = 0; i < tokens.length; i++) {
-         * System.out.println(tokens[i]);
-         * }
-         */
 
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
@@ -74,16 +65,13 @@ public class Operaciones {
                 pila.push(token);
             }
         }
-
         while (!pila.isEmpty()) {
             postFijo.append(pila.pop() + " ");
         }
-
         return postFijo.toString();
     }
 
-    public static Double evaluarExpresionPostfija(String expresionPostfija) {
-        // System.out.println("a: " + expresionPostfija);
+    public static Double evaluarExpresionPostfija(String expresionPostfija) { //Evalua expresion postfija con la pila
         String[] tokens = expresionPostfija.split("\\s+");
         Stack<Double> numeros = new Stack<>();
         for (String token : tokens) {
@@ -127,16 +115,57 @@ public class Operaciones {
                 return a * b;
             case "/":
                 if (b == 0) {
-                    throw new ArithmeticException("División por cero");
+                    throw new ArithmeticException("Division por cero");
                 }
                 return a / b;
             case "%":
                 if (b == 0) {
-                    throw new ArithmeticException("Módulo por cero");
+                    throw new ArithmeticException("Modulo por cero");
                 }
                 return a % b;
             default:
-                throw new IllegalArgumentException("Operador no válido: " + operador);
+                throw new IllegalArgumentException("Operador no valido: " + operador);
         }
+    }
+
+    public static boolean evaluarExpresion(String linea){
+        linea = linea.replaceAll("^[\\s]+|[\\s]+$", "");
+        String[] valores = linea.split("\\s*([<>=!]+)\\s*"); 
+
+        Pattern pattern = Pattern.compile("\\s*([<>=!]+)\\s*");
+        Matcher matcher = pattern.matcher(linea);
+        matcher.find();
+        String operador = matcher.group(1);
+
+
+        switch (operador) {
+            case "==":
+                if(Integer.parseInt(valores[0]) == Integer.parseInt(valores[1]))
+                    return true;
+                break;
+            case "!=":
+                if(Integer.parseInt(valores[0]) != Integer.parseInt(valores[1]))
+                    return true;
+                break;
+            case "<":
+                if(Integer.parseInt(valores[0]) < Integer.parseInt(valores[1]))
+                    return true;
+                break;
+            case ">":
+                if(Integer.parseInt(valores[0]) > Integer.parseInt(valores[1]))
+                    return true;
+                break;
+            case "<=":
+                if(Integer.parseInt(valores[0]) <= Integer.parseInt(valores[1]))
+                    return true;
+                break;
+            case ">=":
+                if(Integer.parseInt(valores[0]) >= Integer.parseInt(valores[1]))
+                    return true;
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 }
