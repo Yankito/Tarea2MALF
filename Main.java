@@ -133,13 +133,10 @@ public class Main {
         if(linea.equals("endif")){  
            
         }
-
         else if(linea.equals("wend")){
             pc = inicioCiclo;
             return true;
         }
-
-        
         else if (linea.charAt(0) == '$') {
 
             String[] partes = linea.split("=", 2);
@@ -180,6 +177,12 @@ public class Main {
                 System.out.println(resultado);
             else
                 return false;
+        }
+        else{
+            pc++;
+            System.out.println("Error en linea: "+pc);
+            System.out.println(linea);
+            System.out.println("error de sintaxis");
         }
         pc++;
         return true;
